@@ -42,6 +42,11 @@ namespace RxDemo
             return subscription;
         }
 
+        public void Unsubscribe(Subscription subscription)
+        {
+            _subscriptions.Remove(subscription);
+        }
+
         private static TValue ValueOrDefault<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key)
         {
             TValue value;
@@ -65,13 +70,15 @@ namespace RxDemo
                 return this;
             }
 
-            public void Do<T>(Action<string, T> action) where T : class
+            public Subscription Do<T>(Action<string, T> action) where T : class
             {
                 _action = (id, obj) =>
                 {
                     var entity = obj as T;
                     if (entity != null) action(id, entity);
                 };
+
+                return this;
             }
 
             public void TryNotify<T>(string id, T entity)

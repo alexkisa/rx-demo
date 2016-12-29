@@ -55,6 +55,22 @@ namespace RxDemo.Tests
             Assert.False(notified);
         }
 
+        [Fact]
+        public void ShouldUnsubscribe()
+        {
+            var repository = new Repository();
+
+            var notified = false;
+            var subscription = repository.Subscribe()
+                .Do<Entity>((_, __) => notified = true);
+
+            repository.Unsubscribe(subscription);
+
+            repository.Update<Entity>("", entity => { });
+
+            Assert.False(notified);
+        }
+
         public class Entity
         {
             public string Property { get; set; }
