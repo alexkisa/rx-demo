@@ -82,6 +82,8 @@
     </ApplicationDefinition>
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerDataEntity.cs" />
+    <Compile Include="CustomerDetailView.cs" />
+    <Compile Include="CustomersListView.cs" />
     <Compile Include="DataStore.cs" />
     <Compile Include="Repository.cs" />
     <Page Include="MainWindow.xaml">
