@@ -1,8 +1,8 @@
-﻿namespace RxDemo
+﻿namespace RxDemo.Customer
 {
-    internal class Customer
+    internal class Entity
     {
-        public Customer(string id, string name, string email)
+        public Entity(string id, string name, string email)
         {
             Id = id;
             Name = name;
@@ -13,20 +13,20 @@
         public string Name { get; }
         public string Email { get; }
 
-        public static Customer FromDataEntity(CustomerDataEntity dataEntity)
+        public static Entity FromDataEntity(DataEntity dataEntity)
         {
-            return new Customer(dataEntity?.Id, dataEntity?.Name, dataEntity?.Email);
+            return new Entity(dataEntity?.Id, dataEntity?.Name, dataEntity?.Email);
         }
 
-        public CustomerDataEntity ToDataEntity()
+        public DataEntity ToDataEntity()
         {
-            var dataEntity = new CustomerDataEntity();
+            var dataEntity = new DataEntity();
             UpdateDataEntity(dataEntity);
 
             return dataEntity;
         }
 
-        public void UpdateDataEntity(CustomerDataEntity dataEntity)
+        public void UpdateDataEntity(DataEntity dataEntity)
         {
             dataEntity.Id = Id;
             dataEntity.Name = Name;

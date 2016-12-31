@@ -2,11 +2,11 @@
 using System.Reactive.Linq;
 using System.Windows.Controls;
 
-namespace RxDemo
+namespace RxDemo.Customer
 {
-    internal class CustomerDetailView : StackPanel
+    internal class DetailView : StackPanel
     {
-        public CustomerDetailView(IObservable<Customer> customerAndUpdates)
+        public DetailView(IObservable<Entity> customerAndUpdates)
         {
             var nameBlock = new TextBlock();
             var emailBlock = new TextBlock();

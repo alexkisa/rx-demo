@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using RxDemo.Customer;
 using Xunit;
 
 namespace RxDemo.Tests
@@ -10,7 +11,7 @@ namespace RxDemo.Tests
         public async void ShouldReturnCustomer()
         {
             var repository = new Repository();
-            repository.Update<CustomerDataEntity>("1", entity => entity.Id = "1");
+            repository.Update<DataEntity>("1", entity => entity.Id = "1");
             var store = new DataStore(repository);
 
             var customer = await store.GetCustomerAndUpdates("1").FirstAsync();
@@ -22,12 +23,12 @@ namespace RxDemo.Tests
         public void ShouldReturnUpdatedCustomer()
         {
             var repository = new Repository();
-            repository.Update<CustomerDataEntity>("1", entity => entity.Id = "1");
+            repository.Update<DataEntity>("1", entity => entity.Id = "1");
             var store = new DataStore(repository);
 
             var received = 0;
             store.GetCustomersAndUpdates().Subscribe(c => received++);
-            repository.Update<CustomerDataEntity>("1", entity => entity.Id = "1");
+            repository.Update<DataEntity>("1", entity => entity.Id = "1");
 
             Assert.Equal(2, received);
         }
@@ -36,7 +37,7 @@ namespace RxDemo.Tests
         public async void ShouldReturnCustomersList()
         {
             var repository = new Repository();
-            repository.Update<CustomerDataEntity>("1", entity => entity.Id = "1");
+            repository.Update<DataEntity>("1", entity => entity.Id = "1");
             var store = new DataStore(repository);
 
             var customers = await store.GetCustomersAndUpdates().FirstAsync();
@@ -52,7 +53,7 @@ namespace RxDemo.Tests
 
             var received = 0;
             store.GetCustomersAndUpdates().Subscribe(c => received++);
-            repository.Update<CustomerDataEntity>("1", entity => entity.Id = "1");
+            repository.Update<DataEntity>("1", entity => entity.Id = "1");
 
             Assert.Equal(2, received);
         }

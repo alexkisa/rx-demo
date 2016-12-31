@@ -6,15 +6,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace RxDemo
+namespace RxDemo.Customer
 {
-    internal class CustomersListView : ListView
+    internal class ListView : System.Windows.Controls.ListView
     {
-        public CustomersListView(IObservable<ImmutableList<Customer>> customersAndUpdates)
+        public ListView(IObservable<ImmutableList<Entity>> customersAndUpdates)
         {
-            ItemTemplate = new DataTemplate(typeof(Customer))
+            ItemTemplate = new DataTemplate(typeof(Entity))
             {
-                VisualTree = TextBlockFactory(nameof(Customer.Name))
+                VisualTree = TextBlockFactory(nameof(Entity.Name))
             };
 
             customersAndUpdates
@@ -23,12 +23,12 @@ namespace RxDemo
 
             SelectedCustomer = Observable
                 .FromEventPattern<SelectionChangedEventHandler, SelectionChangedEventArgs>(h => SelectionChanged += h, h => SelectionChanged -= h)
-                .Select(e => e.EventArgs.AddedItems.OfType<Customer>().FirstOrDefault())
+                .Select(e => e.EventArgs.AddedItems.OfType<Entity>().FirstOrDefault())
                 .Publish()
                 .RefCount();
         }
 
-        public IObservable<Customer> SelectedCustomer { get; }
+        public IObservable<Entity> SelectedCustomer { get; }
 
         private static FrameworkElementFactory TextBlockFactory(string valueName)
         {

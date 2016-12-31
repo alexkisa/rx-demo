@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using RxDemo.Customer;
 
 namespace RxDemo
 {
@@ -12,10 +13,10 @@ namespace RxDemo
             var repository = new Repository();
             var dataStore = new DataStore(repository);
 
-            var customerListView = new CustomersListView(dataStore.GetCustomersAndUpdates());
+            var customerListView = new ListView(dataStore.GetCustomersAndUpdates());
             LeftColumn.Content = customerListView;
 
-            var customerDetailView = new CustomerDetailView(customerListView.SelectedCustomer);
+            var customerDetailView = new DetailView(customerListView.SelectedCustomer);
             RightColumn.Content = customerDetailView;
 
             SeedDataButton.Click += (_, __) =>
@@ -24,14 +25,14 @@ namespace RxDemo
                     Observable.Interval(TimeSpan.FromMilliseconds(200)),
                     new[]
                     {
-                        new CustomerDataEntity {Id = "1", Name = "One", Email = "one@example.com"},
-                        new CustomerDataEntity {Id = "2", Name = "Two", Email = "two@example.com"},
-                        new CustomerDataEntity {Id = "3", Name = "Three", Email = "three@example.com"},
-                        new CustomerDataEntity {Id = "4", Name = "Four", Email = "four@example.com"},
-                        new CustomerDataEntity {Id = "5", Name = "Five", Email = "five@example.com"}
+                        new DataEntity {Id = "1", Name = "One", Email = "one@example.com"},
+                        new DataEntity {Id = "2", Name = "Two", Email = "two@example.com"},
+                        new DataEntity {Id = "3", Name = "Three", Email = "three@example.com"},
+                        new DataEntity {Id = "4", Name = "Four", Email = "four@example.com"},
+                        new DataEntity {Id = "5", Name = "Five", Email = "five@example.com"}
                     },
                     (interval, customer) => customer)
-                    .Subscribe(customer => repository.Update<CustomerDataEntity>(customer.Id, c => Customer.FromDataEntity(customer).UpdateDataEntity(c)));
+                    .Subscribe(customer => repository.Update<DataEntity>(customer.Id, c => Entity.FromDataEntity(customer).UpdateDataEntity(c)));
             };
         }
     }

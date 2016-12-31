@@ -4,28 +4,28 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-namespace RxDemo
+namespace RxDemo.Customer
 {
     internal class DataStore
     {
         private readonly Repository _repository;
-        private readonly IObservable<ImmutableList<Customer>> _customersAndUpdates;
+        private readonly IObservable<ImmutableList<Entity>> _customersAndUpdates;
 
         public DataStore(Repository repository)
         {
             _repository = repository;
 
-            var customerUpdated = Observable.Create<Customer>(o =>
+            var customerUpdated = Observable.Create<Entity>(o =>
             {
                 var subscription = _repository.Subscribe()
-                    .Do<CustomerDataEntity>((id, entity) => o.OnNext(Customer.FromDataEntity(entity)));
+                    .Do<DataEntity>((id, entity) => o.OnNext(Entity.FromDataEntity(entity)));
 
                 return Disposable.Create(() => _repository.Unsubscribe(subscription));
             });
 
             var initialCustomers = _repository
-                .ReadAll<CustomerDataEntity>()
-                .Select(Customer.FromDataEntity)
+                .ReadAll<DataEntity>()
+                .Select(Entity.FromDataEntity)
                 .ToImmutableList();
 
             _customersAndUpdates = customerUpdated
@@ -42,18 +42,18 @@ namespace RxDemo
                 .RefCount();
         }
 
-        public void SaveCustomer(string id, Customer customer)
+        public void SaveCustomer(string id, Entity entity)
         {
-            _repository.Update<CustomerDataEntity>(id, customer.UpdateDataEntity);
+            _repository.Update<DataEntity>(id, entity.UpdateDataEntity);
         }
 
-        public IObservable<Customer> GetCustomerAndUpdates(string id)
+        public IObservable<Entity> GetCustomerAndUpdates(string id)
         {
             return _customersAndUpdates
                 .Select(customers => customers.FirstOrDefault(c => c.Id == id))
                 .DistinctUntilChanged();
         }
 
-        public IObservable<ImmutableList<Customer>> GetCustomersAndUpdates() => _customersAndUpdates;
+        public IObservable<ImmutableList<Entity>> GetCustomersAndUpdates() => _customersAndUpdates;
     }
 }

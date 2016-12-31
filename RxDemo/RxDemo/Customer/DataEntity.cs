@@ -1,6 +1,6 @@
-﻿namespace RxDemo
+﻿namespace RxDemo.Customer
 {
-    internal class CustomerDataEntity
+    internal class DataEntity
     {
         public string Id { get; set; }
         public string Name { get; set; }
