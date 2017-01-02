@@ -8,19 +8,24 @@ namespace RxDemo.Customer
     {
         public DetailView(IObservable<Entity> customerAndUpdates)
         {
-            var nameBlock = new TextBlock();
-            var emailBlock = new TextBlock();
-
             var stackPanel = new StackPanel();
-            stackPanel.Children.Add(nameBlock);
-            stackPanel.Children.Add(emailBlock);
             Children.Add(stackPanel);
+
+            var nameBlock = new TextBlock();
+            stackPanel.Children.Add(nameBlock);
+
+            var phoneBlock = new TextBlock();
+            stackPanel.Children.Add(phoneBlock);
+
+            var emailBlock = new TextBlock();
+            stackPanel.Children.Add(emailBlock);
 
             customerAndUpdates
                 .ObserveOnDispatcher()
                 .Subscribe(customer =>
                 {
                     nameBlock.Text = customer?.Name;
+                    phoneBlock.Text = customer?.Phone;
                     emailBlock.Text = customer?.Email;
                 });
         }
