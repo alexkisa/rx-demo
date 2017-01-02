@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace RxDemo.Customer
@@ -8,26 +9,21 @@ namespace RxDemo.Customer
     {
         public DetailView(IObservable<Entity> customerAndUpdates)
         {
-            var stackPanel = new StackPanel();
-            Children.Add(stackPanel);
+            Margin = new Thickness(10);
 
-            var nameBlock = new TextBlock();
-            stackPanel.Children.Add(nameBlock);
+            var uiCustomerAndUpdates = customerAndUpdates.ObserveOnDispatcher();
 
-            var phoneBlock = new TextBlock();
-            stackPanel.Children.Add(phoneBlock);
+            AddTextBlock("Name", uiCustomerAndUpdates.Select(c => c.Name));
+            AddTextBlock("Phone", uiCustomerAndUpdates.Select(c => c.Phone));
+            AddTextBlock("Email", uiCustomerAndUpdates.Select(c => c.Email));
+        }
 
-            var emailBlock = new TextBlock();
-            stackPanel.Children.Add(emailBlock);
+        private void AddTextBlock(string label, IObservable<string> value)
+        {
+            var block = new TextBlock();
+            value.Subscribe(v => block.Text = v);
 
-            customerAndUpdates
-                .ObserveOnDispatcher()
-                .Subscribe(customer =>
-                {
-                    nameBlock.Text = customer?.Name;
-                    phoneBlock.Text = customer?.Phone;
-                    emailBlock.Text = customer?.Email;
-                });
+            Children.Add(block);
         }
     }
 }

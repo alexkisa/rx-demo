@@ -7,50 +7,42 @@ namespace RxDemo.Customer
 {
     internal class EditWindow : Window
     {
-        public EditWindow(IObservable<Entity> customerAndUpdates)
+        public EditWindow(IObservable<Entity> customerAndUpdates, Window owner = null)
         {
+            Owner = owner;
+            ResizeMode = ResizeMode.NoResize;
             SizeToContent = SizeToContent.WidthAndHeight;
+            Title = "Edit";
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-            var panel = new StackPanel();
+            var panel = new StackPanel {Margin = new Thickness(10)};
             Content = panel;
-
-            var nameBox = Row("Name", customerAndUpdates.Select(c => c.Name));
-            panel.Children.Add(nameBox.Item1);
-
-            var phoneBox = Row("Phone", customerAndUpdates.Select(c => c.Phone));
-            panel.Children.Add(phoneBox.Item1);
-
-            var emailBox = Row("Email", customerAndUpdates.Select(c => c.Email));
-            panel.Children.Add(emailBox.Item1);
-            
-            var okButton = new Button {Content = "OK", HorizontalAlignment = HorizontalAlignment.Right, IsDefault = true};
-            panel.Children.Add(okButton);
-
-            var okClicked = Observable
-                .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(h => okButton.Click += h, h => okButton.Click -= h)
-                .Select(e => true);
 
             var customerChanged = Observable.CombineLatest(
                 customerAndUpdates.Select(c => c.Id),
-                nameBox.Item2,
-                phoneBox.Item2,
-                emailBox.Item2,
+                AddRow(panel, "Name", customerAndUpdates.Select(c => c.Name)),
+                AddRow(panel, "Phone", customerAndUpdates.Select(c => c.Phone)),
+                AddRow(panel, "Email", customerAndUpdates.Select(c => c.Email)),
                 (id, name, phone, email) => new Entity(id, name, phone, email));
 
-            CustomerSaved = okClicked
+            var okButton = new Button { Content = "OK", HorizontalAlignment = HorizontalAlignment.Right, IsDefault = true, Padding = new Thickness(5, 0, 5, 0)};
+            panel.Children.Add(okButton);
+
+            CustomerSaved = Observable
+                .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(h => okButton.Click += h, h => okButton.Click -= h)
                 .WithLatestFrom(customerChanged, (_, customer) => customer);
         }
 
         public IObservable<Entity> CustomerSaved { get; }
 
-        private static Tuple<StackPanel, IObservable<string>> Row(string label, IObservable<string> valueUpdated)
+        private static IObservable<string> AddRow(Panel panel, string label, IObservable<string> valueUpdated)
         {
-            var panel = new StackPanel {Orientation = Orientation.Horizontal};
+            var horizontalPanel = new StackPanel {Margin = new Thickness(0, 0, 0, 5), Orientation = Orientation.Horizontal};
 
-            panel.Children.Add(new TextBlock {Text = label, Width = 80});
+            horizontalPanel.Children.Add(new TextBlock {Text = label, Width = 80});
 
             var valueBox = new TextBox {Width = 120};
-            panel.Children.Add(valueBox);
+            horizontalPanel.Children.Add(valueBox);
 
             var valueChanged = Observable
                 .FromEventPattern<TextChangedEventHandler, TextChangedEventArgs>(h => valueBox.TextChanged += h, h => valueBox.TextChanged -= h)
@@ -59,7 +51,9 @@ namespace RxDemo.Customer
 
             valueUpdated.Subscribe(value => valueBox.Text = value);
 
-            return Tuple.Create(panel, valueChanged);
+            panel.Children.Add(horizontalPanel);
+
+            return valueChanged;
         }
     }
 }

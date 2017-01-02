@@ -16,7 +16,7 @@ namespace RxDemo
             var customerListView = new ListView(dataStore.GetCustomersAndUpdates());
             customerListView.CustomerConfirmed.Subscribe(customer =>
             {
-                var editWindow = new EditWindow(dataStore.GetCustomerAndUpdates(customer.Id));
+                var editWindow = new EditWindow(dataStore.GetCustomerAndUpdates(customer.Id), this);
                 editWindow.CustomerSaved.Subscribe(c =>
                 {
                     dataStore.SaveCustomer(c.Id, c);
