@@ -14,11 +14,26 @@ namespace RxDemo
             var dataStore = new DataStore(repository);
 
             var customerListView = new ListView(dataStore.GetCustomersAndUpdates());
+            customerListView.CustomerConfirmed.Subscribe(customer =>
+            {
+                var editWindow = new EditWindow(dataStore.GetCustomerAndUpdates(customer.Id));
+                editWindow.CustomerSaved.Subscribe(c =>
+                {
+                    dataStore.SaveCustomer(c.Id, c);
+                    editWindow.Close();
+                });
+
+                editWindow.Show();
+            });
             LeftColumn.Content = customerListView;
 
-            var customerDetailView = new DetailView(customerListView.SelectedCustomer);
-            RightColumn.Content = customerDetailView;
+            var selectedCustomerAndUpdates = customerListView.CustomerSelected
+                .Where(customer => customer != null)
+                .Select(customer => dataStore.GetCustomerAndUpdates(customer.Id)).Switch();
 
+            var customerDetailView = new DetailView(selectedCustomerAndUpdates);
+            RightColumn.Content = customerDetailView;
+            
             SeedDataButton.Click += (_, __) =>
             {
                 Observable.Zip(

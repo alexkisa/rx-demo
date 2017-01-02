@@ -80,6 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Customer\EditWindow.cs" />
     <Compile Include="Customer\Entity.cs" />
     <Compile Include="Customer\DataEntity.cs" />
     <Compile Include="Customer\DetailView.cs" />

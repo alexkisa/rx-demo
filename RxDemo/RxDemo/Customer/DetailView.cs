@@ -20,8 +20,8 @@ namespace RxDemo.Customer
                 .ObserveOnDispatcher()
                 .Subscribe(customer =>
                 {
-                    nameBlock.Text = customer.Name;
-                    emailBlock.Text = customer.Email;
+                    nameBlock.Text = customer?.Name;
+                    emailBlock.Text = customer?.Email;
                 });
         }
     }
